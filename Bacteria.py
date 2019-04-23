@@ -57,7 +57,8 @@ class Bacteria(pygame.sprite.Sprite):
 			self.salud -= 10
 
 	def ingerir_nutrientes(self, nutrinte):
-		pass
+		if self.energia < 100:
+			self.energia += self.metabolismo
 
 	def receptor_de_antibiotico(self, daño):
 		pass
