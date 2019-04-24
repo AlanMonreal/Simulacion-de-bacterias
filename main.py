@@ -100,13 +100,12 @@ pause.place(x=810, y=350)
 restart.place(x=770, y=390)
 
 
-
 clock = pygame.time.Clock()
 
 bg = pygame.image.load("sim_background.png")
 def simulation():
     bacterias = [Bacteria(random.randint(100, 400), random.randint(100, 400))
-                for i in range(random.randint(20, 50))]
+                for i in range(random.randint(2, 5))]
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -121,12 +120,16 @@ def simulation():
             bacteria.colocar_bacteria(screen)
             bacteria.movimiento()
             bacteria.establecer_tiempo()
-            bacteria.ingerir_nutrientes(2)
+            bacteria.ingerir_nutrientes(nutrient.get())
+
             if bacteria.verificar_reproduccion():
                 x, y = bacteria.cordenadas()
-                nuevas_bacterias.append(Bacteria(x + random.randint(-10, 10), y + random.randint(-10, 10)))
+                nuevas_bacterias.append(Bacteria(x + random.choice([-10, 10]), y + random.choice([-10, 10])))
+            if bacteria.verificar_energia() <= 0:
+                bacterias.remove(bacteria)
+                del bacteria
         bacterias = bacterias + nuevas_bacterias
-        print(len(bacterias))
+        print("numero de bacterias {}".format(len(bacterias)))
         root.update()
         clock.tick(10)
         pygame.display.update()
