@@ -22,7 +22,7 @@ class Bacteria(pygame.sprite.Sprite):
 		self.energia = random.randint(0, 100)
 		self.reproduccion = False
 		self.pared_celular = 100 if self.gram else 8
-		self.metabolismo = 2
+		self.metabolismo = round(random.random(), 1)
 		self.porcentage_de_adaptacion = round(random.random(), 1)
 		self.adaptacion = 20.5
 		self.tiempo = 0
@@ -61,27 +61,28 @@ class Bacteria(pygame.sprite.Sprite):
 
 	def ingerir_nutrientes(self, nutrinte):
 		if self.energia < 100:
-			self.energia += self.metabolismo
+			self.energia += nutrinte * self.metabolismo
 
 	def receptor_de_antibiotico(self, daño):
 		pass
 
 	def verificar_reproduccion(self):
 		if self.energia > 96 and self.energia < 100 and self.adaptacion > 50:
+			self.energia -= 50
 			return True
 		else: return False
 
-	def establecer_tiempo(self, tiempo):
-		self.tiempo += tiempo
-		self.adaptacion += self.porcentage_de_adaptacion 
+	def verificar_energia(self):
+		return self.energia
 
+	def establecer_tiempo(self):
+		self.adaptacion += self.porcentage_de_adaptacion 
 
 	def colocar_bacteria(self, window):
 		window.blit(self.sprite, self.sprite_de_bacteria)
 
 	def cordenadas(self):
 		return self.sprite_de_bacteria.centerx, self.sprite_de_bacteria.centery
-
 
 	def movimiento(self):
 		self.sprite_de_bacteria.centerx += random.randint(-1, 1) 
