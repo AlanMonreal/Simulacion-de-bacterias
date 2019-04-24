@@ -100,11 +100,7 @@ pause.place(x=810, y=350)
 restart.place(x=770, y=390)
 
 
-while True:
-    pygame.display.update()
-    root.update()
-
-bacterias = [Bacteria(random.randint(50, 650), random.randint(50, 650))
+bacterias = [Bacteria(random.randint(50, 450), random.randint(50, 450))
              for i in range(random.randint(30, 50))]
 
 clock = pygame.time.Clock()
@@ -116,12 +112,13 @@ def simulation():
                 pygame.quit()
                 sys.exit()
 
-        window.fill((255, 255, 255))
+        screen.fill((255, 255, 255))
         for bacteria in bacterias:
-            bacteria.colocar_bacteria(window)
+            bacteria.colocar_bacteria(screen)
             bacteria.movimiento()
             bacteria.update()
-        clock.tick(5)
-        pygame.display.flip()
+        root.update()
+        clock.tick(10)
+        pygame.display.update()
 
 if __name__ == '__main__': simulation()
