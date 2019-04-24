@@ -105,7 +105,7 @@ clock = pygame.time.Clock()
 bg = pygame.image.load("sim_background.png")
 def simulation():
     bacterias = [Bacteria(random.randint(100, 400), random.randint(100, 400))
-                for i in range(random.randint(2, 5))]
+                for i in range(random.randint(10, 50))]
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
