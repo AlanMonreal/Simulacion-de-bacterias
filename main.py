@@ -34,14 +34,14 @@ def pause():
 def simulation():
 
     bacterias = [Bacteria(random.randint(100, 400), random.randint(100, 400))
-                 for i in range(random.randint(20, 50))]
+                for i in range(random.randint(10, 50))]
 
     num_bacterias = tk.IntVar()
     bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
     bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
     bacterias_count.place(x=525, y=325)
     bacterias_live_count.place(x=680, y=325)
-
+    
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -56,18 +56,20 @@ def simulation():
             bacteria.colocar_bacteria(screen)
             bacteria.movimiento()
             bacteria.establecer_tiempo()
-            bacteria.ingerir_nutrientes(2)
+            bacteria.ingerir_nutrientes(nutrient.get())
+
             if bacteria.verificar_reproduccion():
                 x, y = bacteria.cordenadas()
-                nuevas_bacterias.append(
-                    Bacteria(x + random.randint(-10, 10), y + random.randint(-10, 10)))
+                nuevas_bacterias.append(Bacteria(x + random.choice([-10, 10]), y + random.choice([-10, 10])))
+            if bacteria.verificar_energia() <= 0:
+                bacterias.remove(bacteria)
+                del bacteria
         bacterias = bacterias + nuevas_bacterias
         number_of_bacterias = len(bacterias)
         num_bacterias.set(number_of_bacterias)
         root.update()
         clock.tick(10)
         pygame.display.update()
-
 
 root = tk.Tk()
 root.title("Simulador de bacterias")
