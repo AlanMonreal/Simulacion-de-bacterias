@@ -159,8 +159,6 @@ start_button.place(x=730, y=350)
 pause_button.place(x=810, y=350)
 restart_button.place(x=770, y=390)
 
-
-
 bg = pygame.image.load("sim_background.png")
 
 while True:
