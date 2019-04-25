@@ -6,7 +6,6 @@ import pygame, sys
 import random
 import os
 
-global paused
 paused = False
 clock = pygame.time.Clock()
 startcount = 0
@@ -25,14 +24,18 @@ def restart():
 
 
 def pause():
-    if pause_button.cget('text') == 'Resumir':
-        pause_button.config(text="Pausar")
-        return
+    global paused
     if pause_button.cget('text') == 'Pausar':
         pause_button.config(text="Resumir")
+        paused = True
+        return
+    if pause_button.cget('text') == 'Resumir':
+        pause_button.config(text="Pausar")
+        paused = False
+        return
+    
 
 def simulation():
-
     bacterias = [Bacteria(random.randint(100, 400), random.randint(100, 400))
                 for i in range(random.randint(10, 50))]
 
@@ -41,32 +44,34 @@ def simulation():
     bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
     bacterias_count.place(x=525, y=325)
     bacterias_live_count.place(x=680, y=325)
-    
+
     while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        if paused == False:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-        screen.fill((255, 255, 255))
-        screen.blit(bg, (0, 0))
-        nuevas_bacterias = []
+            screen.fill((255, 255, 255))
+            screen.blit(bg, (0, 0))
+            nuevas_bacterias = []
 
-        for bacteria in bacterias:
-            bacteria.colocar_bacteria(screen)
-            bacteria.movimiento()
-            bacteria.establecer_tiempo()
-            bacteria.ingerir_nutrientes(nutrient.get())
+            for bacteria in bacterias:
+                bacteria.colocar_bacteria(screen)
+                bacteria.movimiento()
+                bacteria.establecer_tiempo()
+                bacteria.ingerir_nutrientes(nutrient.get())
 
-            if bacteria.verificar_reproduccion():
-                x, y = bacteria.cordenadas()
-                nuevas_bacterias.append(Bacteria(x + random.choice([-10, 10]), y + random.choice([-10, 10])))
-            if bacteria.verificar_energia() <= 0:
-                bacterias.remove(bacteria)
-                del bacteria
-        bacterias = bacterias + nuevas_bacterias
-        number_of_bacterias = len(bacterias)
-        num_bacterias.set(number_of_bacterias)
+                if bacteria.verificar_reproduccion():
+                    x, y = bacteria.cordenadas()
+                    nuevas_bacterias.append(Bacteria(x + random.choice([-10, 10]), y + random.choice([-10, 10])))
+                if bacteria.verificar_energia() <= 0:
+                    bacterias.remove(bacteria)
+                    del bacteria
+            bacterias = bacterias + nuevas_bacterias
+            number_of_bacterias = len(bacterias)
+            num_bacterias.set(number_of_bacterias)
+            
         root.update()
         clock.tick(10)
         pygame.display.update()
