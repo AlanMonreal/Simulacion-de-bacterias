@@ -71,6 +71,7 @@ def simulation():
         clock.tick(10)
         pygame.display.update()
 
+
 root = tk.Tk()
 root.title("Simulador de bacterias")
 # creates embed frame for pygame window
@@ -158,8 +159,6 @@ restart_button = Button(root, text="Reiniciar", command=restart)
 start_button.place(x=730, y=350)
 pause_button.place(x=810, y=350)
 restart_button.place(x=770, y=390)
-
-bg = pygame.image.load("sim_background.png")
 
 while True:
     pygame.display.update()
