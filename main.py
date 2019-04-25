@@ -71,7 +71,10 @@ def simulation():
         clock.tick(10)
         pygame.display.update()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> c33df181279d6887072b6905bbc27bc9fa451141
 root = tk.Tk()
 root.title("Simulador de bacterias")
 # creates embed frame for pygame window
