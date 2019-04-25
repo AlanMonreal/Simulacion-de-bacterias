@@ -10,8 +10,8 @@ class Bacteria(pygame.sprite.Sprite):
 
 		#sprite de la bacteria
 		self.sprite = pygame.image.load("sprites/bacteria.png")
-		self.image_size = random.randint(10,30)
-		self.sprite = pygame.transform.scale(self.sprite, (self.image_size, self.image_size))
+		self.tamano = random.randint(10,30)
+		self.sprite = pygame.transform.scale(self.sprite, (self.tamano, self.tamano))
 		self.sprite_de_bacteria = self.sprite.get_rect()
 
 		#posicion de la bacteria
@@ -19,12 +19,15 @@ class Bacteria(pygame.sprite.Sprite):
 		self.sprite_de_bacteria.centery = position_y
 		self.gram = gram
 		self.salud = 100
-		self.energia = 100
+		self.energia = random.randint(0, 100)
 		self.reproduccion = False
 		self.pared_celular = 100 if self.gram else 8
-		self.metabolismo = 2
+		self.metabolismo = round(random.random(), 1)
+		self.porcentage_de_adaptacion = round(random.random(), 1)
+		self.adaptacion = 20.5
+		self.tiempo = 0
 
-	def sensacion_termina(self, temperatura):
+	def termorecepcion(self, temperatura):
 		if temperatura < 5:
 			self.salud = 0
 		elif temperatura > 5 and temperatura < 15:
@@ -57,18 +60,30 @@ class Bacteria(pygame.sprite.Sprite):
 			self.salud -= 10
 
 	def ingerir_nutrientes(self, nutrinte):
-		pass
+		if self.energia < 100:
+			self.energia += nutrinte * self.metabolismo
 
 	def receptor_de_antibiotico(self, daño):
 		pass
 
 	def verificar_reproduccion(self):
-		if self.energia > 50 and self.energia < 100:
-			self.reproducirce()
+		if self.energia > 96 and self.energia < 100 and self.adaptacion > 50:
+			self.energia -= 50
+			return True
+		else: return False
+
+	def verificar_energia(self):
+		return self.energia
+
+	def establecer_tiempo(self):
+		self.adaptacion += self.porcentage_de_adaptacion 
 
 	def colocar_bacteria(self, window):
 		window.blit(self.sprite, self.sprite_de_bacteria)
 
+	def cordenadas(self):
+		return self.sprite_de_bacteria.centerx, self.sprite_de_bacteria.centery
+
 	def movimiento(self):
-		self.sprite_de_bacteria.centerx += random.randint(-1, 1) if self.sprite_de_bacteria.centerx < 650 and self.sprite_de_bacteria.centerx > 50 else 0
+		self.sprite_de_bacteria.centerx += random.randint(-1, 1) 
 		self.sprite_de_bacteria.centery += random.randint(-1, 1)
