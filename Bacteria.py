@@ -22,32 +22,41 @@ class Bacteria(pygame.sprite.Sprite):
 		self.energia = random.randint(0, 100)
 		self.reproduccion = False
 		self.pared_celular = 100 if self.gram else 8
-		self.metabolismo = round(random.random(), 1)
-		self.porcentage_de_adaptacion = random.randint(1, 7) / 10
+		self.metabolismo = random.randint(1, 9) / 10 
+		self.porcentage_de_adaptacion = random.randint(1, 5) / 10
 		self.adaptacion = 0.0
 		self.tiempo = 0
-		self.consumo_de_energia = round(random.random() * -1, 1)
+		self.consumo_de_energia = (random.randint(3, 6) / 10) * -1
 
 	def termorecepcion(self, temperatura):
 		if temperatura < 5:
-			self.salud = 0
+			self.salud -= 10
 		elif temperatura > 5 and temperatura < 15:
-			self.salud -= 0.1
+			self.salud -= 0.5
 		elif temperatura > 15 and temperatura < 30:
-			self.salud -= 0.03
+			self.salud -= 0.1
 		elif temperatura > 30 and temperatura < 40:
 			self.salud = self.salud
 		elif temperatura > 40 and temperatura < 50:
-			self.salud -= 0.03
-		elif temperatura > 50 and temperatura < 60:
 			self.salud -= 0.1
+		elif temperatura > 50 and temperatura < 60:
+			self.salud -= 0.5
 		elif temperatura > 60: 
-			self.salud = 0
+			self.salud -= 10
 
 	def sensacion_de_humedad(self, porcentage):
-		pass
+		if porcentage >= 0 and porcentage <= 20:
+			self.salud -= 2
+		elif porcentage > 20 and porcentage <= 40: 
+			self.salud -= 1
+		elif porcentage > 40 and porcentage <= 60 and self.salud <= 100: 
+			self.salud += 0.01
+		elif porcentage > 60 and porcentage <= 80 and self.salud <= 100: 
+			self.salud += 0.1
+		elif porcentage > 80 and porcentage <= 100 and self.salud <= 100: 
+			self.salud += 0.2
 
-	def sesacion_de_acidez(self, pH):
+	def sensacion_de_acidez(self, pH):
 		#pH 7 es neutro, < es acido, > 7 es base
 		if pH > 7.0 and pH < 8.0:
 			self.salud = self.salud
@@ -61,7 +70,7 @@ class Bacteria(pygame.sprite.Sprite):
 			self.salud -= 0.5
 
 	def ingerir_nutrientes(self, nutrinte):
-		if self.energia < 100 and nutrinte < 10:
+		if self.energia < 100:
 			self.energia += nutrinte * self.metabolismo
 		elif self.energia > 100: 
 			self.energia = 90
@@ -80,9 +89,9 @@ class Bacteria(pygame.sprite.Sprite):
 		return self.energia
 	
 	def verificar_salud(self):
-		pass
+		return self.salud
 
-	def establecer_tiempo(self):
+	def establecer_adaptacion(self):
 		self.adaptacion += self.porcentage_de_adaptacion 
 
 	def colocar_bacteria(self, window):

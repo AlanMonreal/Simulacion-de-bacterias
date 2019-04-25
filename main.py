@@ -37,7 +37,7 @@ def pause():
 
 def simulation():
     bacterias = [Bacteria(random.randint(100, 400), random.randint(100, 400))
-                for i in range(random.randint(10, 50))]
+                for i in range(random.randint(20, 50))]
 
     num_bacterias = tk.IntVar()
     bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
@@ -55,19 +55,31 @@ def simulation():
             screen.fill((255, 255, 255))
             screen.blit(bg, (0, 0))
             nuevas_bacterias = []
-
-            for bacteria in bacterias:
+            for bacteria in reversed(bacterias):
+                #movimiento 
                 bacteria.colocar_bacteria(screen)
                 bacteria.movimiento()
-                bacteria.establecer_tiempo()
-                bacteria.ingerir_nutrientes(nutrient.get())
 
+                #adaptacion
+                bacteria.establecer_adaptacion()
+                
+                #sentidos
+                bacteria.termorecepcion(temp.get())
+                bacteria.sensacion_de_acidez(acidity.get())
+                bacteria.sensacion_de_humedad(humidity.get())
+                
+                #energia y salud
+                bacteria.ingerir_nutrientes(nutrient.get())
+                bacteria.verificar_salud()
+
+                #verificar si se reproduce o muere
                 if bacteria.verificar_reproduccion():
                     x, y = bacteria.cordenadas()
                     nuevas_bacterias.append(Bacteria(x + random.choice([-10, 10]), y + random.choice([-10, 10])))
-                if bacteria.verificar_energia() <= 0:
+                if bacteria.verificar_energia() <= 0 or bacteria.verificar_salud() <= 0:
                     bacterias.remove(bacteria)
                     del bacteria
+
             bacterias = bacterias + nuevas_bacterias
             number_of_bacterias = len(bacterias)
             num_bacterias.set(number_of_bacterias)
