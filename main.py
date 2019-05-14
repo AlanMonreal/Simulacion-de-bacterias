@@ -15,6 +15,7 @@ def start():
     global startcount
     if startcount == 0:
         startcount += 1
+        start_button.place_forget()
         simulation()
 
 
@@ -151,30 +152,37 @@ acidity_live_label.place(x=583, y=375)
 nutrient_live_label.place(x=600, y=400)
 humidity_live_label.place(x=605, y=425)
 
-antibiotic_label = Label(root, text="Antibiotico", font=("Helvetica", 20))
-antibiotic_label.place(x=520, y=35)
-antibiotic_1 = Button(root, text="lorem ipsum", command=quit)
-antibiotic_1.place(x=545, y=75)
-antibiotic_2 = Button(root, text="lorem ipsum", command=quit)
-antibiotic_2.place(x=545, y=105)
-antibiotic_3 = Button(root, text="lorem ipsum", command=quit)
-antibiotic_3.place(x=545, y=135)
+# antibiotic_label = Label(root, text="Antibiotico", font=("Helvetica", 20))
+# antibiotic_1 = Button(root, text="lorem ipsum", command=quit)
+# antibiotic_2 = Button(root, text="lorem ipsum", command=quit)
+# antibiotic_3 = Button(root, text="lorem ipsum", command=quit)
+# antibiotic_label.place(x=520, y=35)
+# antibiotic_1.place(x=545, y=75)
+# antibiotic_2.place(x=545, y=105)
+# antibiotic_3.place(x=545, y=135)
 
 bacteria_label = Label(root, text="Bacteria", font=("Helvetica", 20))
-bacteria_label.place(x=530, y=165)
-bacteria_1 = Button(root, text="lorem ipsum", command=quit)
-bacteria_1.place(x=545, y=205)
-bacteria_2 = Button(root, text="lorem ipsum", command=quit)
-bacteria_2.place(x=545, y=235)
-bacteria_3 = Button(root, text="lorem ipsum", command=quit)
-bacteria_3.place(x=545, y=265)
+bacteria_1 = Button(root, text="S. pneumoniae", command=quit)
+bacteria_2 = Button(root, text="H. influenzae", command=quit)
+bacteria_3 = Button(root, text="M. pneumoniae", command=quit)
+bacteria_4 = Button(root, text="S. pyogenes", command=quit)
+bacteria_5 = Button(root, text="E. coli", command=quit)
+bacteria_6 = Button(root, text="P. mirabilis", command=quit)
+bacteria_label.place(x=520, y=35)
+bacteria_1.place(x=535, y=75)
+bacteria_2.place(x=535, y=105)
+bacteria_3.place(x=535, y=135)
+bacteria_4.place(x=535, y=165)
+bacteria_5.place(x=535, y=195)
+bacteria_6.place(x=535, y=225)
 
 start_button = Button(root, text="Empezar", command=start)
 pause_button = Button(root, text="Pausar", command=pause)
 restart_button = Button(root, text="Reiniciar", command=restart)
-start_button.place(x=730, y=350)
-pause_button.place(x=810, y=350)
-restart_button.place(x=770, y=390)
+start_button.place(x=780, y=350)
+pause_button.place(x=755, y=390)
+restart_button.place(x=810, y=390)
+
 
 while True:
     pygame.display.update()
