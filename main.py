@@ -11,6 +11,8 @@ clock = pygame.time.Clock()
 startcount = 0
 
 
+
+
 def start():
     global startcount
     if startcount == 0:
@@ -104,7 +106,11 @@ screen.fill(pygame.Color(255, 255, 255))
 pygame.display.init()
 pygame.display.update()
 
-bg = pygame.image.load("sim_background.png")
+filename = PhotoImage(file = "background.png")
+background_label = Label(root, image=filename)
+background_label.place(x=500, y=0)
+
+bg = pygame.image.load("lent.png")
 screen.blit(bg, (0, 0))
 
 temp = tk.IntVar()
