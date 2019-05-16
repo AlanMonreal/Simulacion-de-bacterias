@@ -3,30 +3,30 @@ from pygame.locals import *
 import random
 
 class Bacteria(pygame.sprite.Sprite):
-	def __init__(self, position_x, position_y, gram=True):
+	def __init__(self, sprite, tamano, position_x, position_y, gram, metabolismo, porcentage_de_adaptacion, adaptacion):
 		""" posicion de la bacteria en la simulacion
 			gram: definir si la bacteria es gram positiva:True o negativa:False"""
 		pygame.sprite.Sprite.__init__(self)
 
 		#sprite de la bacteria
-		self.sprite = pygame.image.load("sprites/bacteria.png")
-		self.tamano = random.randint(10,30)
+		self.sprite = pygame.image.load(sprite) if sprite else pygame.image.load("sprites/bacteria.png")
+		self.tamano = tamano if tamano else random.randint(10,30) #checar el tama;o
 		self.sprite = pygame.transform.scale(self.sprite, (self.tamano, self.tamano))
 		self.sprite_de_bacteria = self.sprite.get_rect()
 
 		#variables de la bacteria
 		self.sprite_de_bacteria.centerx = position_x
 		self.sprite_de_bacteria.centery = position_y
-		self.gram = gram
+		self.gram = gram if gram else True
 		self.salud = 100
 		self.energia = random.randint(0, 100)
 		self.reproduccion = False
 		self.pared_celular = 100 if self.gram else 8
 		self.metabolismo = random.randint(1, 9) / 10 
-		self.porcentage_de_adaptacion = random.randint(1, 5) / 10
-		self.adaptacion = 0.0
+		self.porcentage_de_adaptacion = porcentage_de_adaptacion if porcentage_de_adaptacion else random.randint(1, 5) / 10
+		self.adaptacion = adaptacion if adaptacion else 0.0
 		self.tiempo = 0
-		self.consumo_de_energia = (random.randint(3, 6) / 10) * -1
+		self.consumo_de_energia = consumo_de_energia if consumo_de_energia else (random.randint(3, 6) / 10) * -1
 
 	def termorecepcion(self, temperatura):
 		if temperatura < 5:
