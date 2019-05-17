@@ -15,22 +15,29 @@ sizeMin = [5, 14, 18, 20, 9, 15]
 sizeMax = [15, 25, 27, 30, 23, 30]
 metMin = [1, 3, 2, 4, 2, 1]
 metMax = [9, 10, 12, 8, 7, 10]
-#dictBact = {"S. pneumoniae" : 0, "H. influenzae" : 1, "M. pneumoniae" : 2, "S. pyogenes" : 3, "E. coli" : 4, "P. mirabilis" : 5}
+initalFood = None
+dictBact = {0 : "S. pneumoniae", 1 : "H. influenzae", 2 : "M. pneumoniae", 3 : "S. pyogenes", 4 : "E. coli", 5: "P. mirabilis"}
 
 
 def start():
-    global startcount
+    global startcount, initalFood
+    print(' '+ str(temp.get()) +  str(acidity.get()) + str(nutrient.get()) + str(humidity.get()))
     if curBact == None:
     	print('no bacteria selected')
+    	return
+    if temp.get() == 0 and acidity.get() == 0 and nutrient.get() ==0 and humidity.get() == 0:
     	return
     if startcount == 0:
         startcount += 1
         start_button.place_forget()
+        initalFood = nutrient.get() * 100000
         simulation()
 
 def restart():
-    if startcount == 1:
-        simulation()
+	global initalFood
+	if startcount == 1:
+		initalFood = nutrient.get() * 100000
+		simulation()
 
 def pause():
     global paused
@@ -47,6 +54,8 @@ def setSelectedBacteria(index):
 	print('setting bacteria: ' + str(index))
 	global curBact
 	curBact = bacterias[index]
+	sel_bact_label = Label(root, text="Bacteria seleccionada: " + dictBact[curBact], font=("Helvetica", 12))
+	sel_bact_label.place(x=525, y=300)
 
 def initiateBacteria():
 	#args: sprite, tama;o Min, tama;o Max, posx, posy, gram, energia, metabolismoMin, metabolismoMax, %adaptacion, adaptacion, 
@@ -57,6 +66,7 @@ def initiateBacteria():
     
 
 def simulation():
+	global initalFood
 	bacterias = initiateBacteria()
 	num_bacterias = tk.IntVar()
 	bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
@@ -88,7 +98,8 @@ def simulation():
 				bacteria.sensacion_de_humedad(humidity.get())
 
 				#energia y salud
-				bacteria.ingerir_nutrientes(nutrient.get())
+				bacteria.ing_nut(initalFood, len(bacterias))
+				#bacteria.ingerir_nutrientes(nutrient.get())
 				bacteria.verificar_salud()
 
 				#verificar si se reproduce o muere
@@ -103,6 +114,9 @@ def simulation():
 			bacterias = bacterias + nuevas_bacterias
 			number_of_bacterias = len(bacterias)
 			num_bacterias.set(number_of_bacterias)
+			
+			initalFood -= 1 * number_of_bacterias
+			print('food left: ' + str(initalFood))
 
 		root.update()
 		clock.tick(10)
@@ -198,6 +212,10 @@ bacteria_3.place(x=535, y=135)
 bacteria_4.place(x=535, y=165)
 bacteria_5.place(x=535, y=195)
 bacteria_6.place(x=535, y=225)
+
+sel_bact_label = Label(root, text="Bacteria seleccionada: ", font=("Helvetica", 12))
+sel_bact_label.place(x=525, y=300)
+
 
 start_button = Button(root, text="Empezar", command=start)
 pause_button = Button(root, text="Pausar", command=pause)

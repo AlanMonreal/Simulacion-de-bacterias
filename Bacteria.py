@@ -76,6 +76,22 @@ class Bacteria(pygame.sprite.Sprite):
 		elif self.energia > 100: 
 			self.energia = 90
 
+	def ing_nut(self, nutriente, cantBact):
+		if(nutriente > (cantBact * 3)):
+			nut = 3
+		elif(nutriente > (cantBact * 2)):
+			nut = 2
+		elif(nutriente < 0):
+			nut = 0
+			self.salud -= 0.2
+		else:
+			nut = 1
+			self.salud -= 0.01
+		if self.energia < 100 and nut != 0:
+			self.energia += nut * self.metabolismo
+		elif self.energia > 100: 
+			self.energia = 90
+
 	def receptor_de_antibiotico(self, daño):
 		pass
 
