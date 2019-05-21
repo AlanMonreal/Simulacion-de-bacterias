@@ -1,1 +1,4 @@
-__pycache__/
+bak/
+.env
+__pycache__
+tags
