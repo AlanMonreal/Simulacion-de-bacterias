@@ -5,9 +5,13 @@ from tkinter import *
 import pygame, sys
 import random
 import os
+import csv
+import plot
+import pdf_maker
 
-paused = False
+
 clock = pygame.time.Clock()
+paused = False
 startcount = 0
 curBact = None
 bacterias = [0, 1, 2, 3, 4, 5]
@@ -28,7 +32,7 @@ def start():
     if temp.get() == 0 and acidity.get() == 0 and nutrient.get() ==0 and humidity.get() == 0:
     	return
     if startcount == 0:
-        startcount += 1
+        startcount += 1	
         start_button.place_forget()
         initalFood = nutrient.get() * 100000
         simulation()
@@ -65,14 +69,43 @@ def initiateBacteria():
 	return bacterias
     
 
+def save_image():
+	pygame.image.save(screen, 'current.jpeg')
+
+
+def open_image():
+	os.startfile('current.jpeg')
+
+
+def open_pdf():
+	os.startfile('simulador.pdf')
+
+
 def simulation():
 	global initalFood
+	open_pdf_button = Button(root, text="Abrir Reporte", command=open_pdf)
+	open_pdf_button.place_forget()
+	initial_temp = temp.get()
+	initial_acidity = acidity.get()
+	initial_nutrient = nutrient.get() * 100000
+	initial_humidity = humidity.get()
 	bacterias = initiateBacteria()
 	num_bacterias = tk.IntVar()
 	bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
 	bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
 	bacterias_count.place(x=525, y=325)
 	bacterias_live_count.place(x=680, y=325)
+	start_time = pygame.time.get_ticks()
+	milliseconds_paused = 0
+	sim_done = False
+	initalfood_zero = True
+	first_frame = True
+	number_of_bacterias_max = 0
+	pygame.image.save(screen, "initialbacteria.jpeg")
+
+	with open('simulador.csv', 'w+', newline='') as csvfile:
+		filewrite = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		filewrite.writerow(['"seconds"', '"count"','"foodquant"' ])
 
 	while True:
 		if not paused:
@@ -118,8 +151,40 @@ def simulation():
 			initalFood -= 1 * number_of_bacterias
 			print('food left: ' + str(initalFood))
 
-		root.update()
+			if start_time:
+				milliseconds = pygame.time.get_ticks() - start_time - milliseconds_paused
+				seconds = int((milliseconds) / 1000)
+			
+			if number_of_bacterias > 0:
+				sim_done = False
+				with open('simulador.csv', 'a+', newline='') as csvfile:
+					filewrite = csv.writer(csvfile, delimiter=',',quotechar='|', quoting=csv.QUOTE_MINIMAL)
+					filewrite.writerow([seconds, number_of_bacterias, initalFood])
+
+			if number_of_bacterias > number_of_bacterias_max:
+				number_of_bacterias_max = number_of_bacterias
+				pygame.image.save(screen, "maxbacteria.jpeg")
+				print("-----------------")
+					
+			if number_of_bacterias == 0:
+				if sim_done:
+					plot.timeseries()					
+					pdf_maker.make_pdf(dictBact[curBact], seconds, initial_temp, initial_acidity, initial_nutrient, initial_humidity)
+					open_pdf_button.place(x=880, y=460)
+					
+				else:
+					sim_done = True
+
+			if first_frame:
+				pygame.image.save(screen, "initialbacteria.jpeg")
+				first_frame = False
+
+
+		else:
+			milliseconds_paused += clock.get_time()
+
 		clock.tick(10)
+		root.update()
 		pygame.display.update()
 
 root = tk.Tk()
@@ -189,15 +254,6 @@ acidity_live_label.place(x=583, y=375)
 nutrient_live_label.place(x=600, y=400)
 humidity_live_label.place(x=605, y=425)
 
-# antibiotic_label = Label(root, text="Antibiotico", font=("Helvetica", 20))
-# antibiotic_1 = Button(root, text="lorem ipsum", command=quit)
-# antibiotic_2 = Button(root, text="lorem ipsum", command=quit)
-# antibiotic_3 = Button(root, text="lorem ipsum", command=quit)
-# antibiotic_label.place(x=520, y=35)
-# antibiotic_1.place(x=545, y=75)
-# antibiotic_2.place(x=545, y=105)
-# antibiotic_3.place(x=545, y=135)
-
 bacteria_label = Label(root, text="Bacteria", font=("Helvetica", 20))
 bacteria_1 = Button(root, text="S. pneumoniae", command=lambda:setSelectedBacteria(0))
 bacteria_2 = Button(root, text="H. influenzae", command=lambda: setSelectedBacteria(1))
@@ -223,6 +279,11 @@ restart_button = Button(root, text="Reiniciar", command=restart)
 start_button.place(x=780, y=350)
 pause_button.place(x=755, y=390)
 restart_button.place(x=810, y=390)
+
+save_image_button = Button(root, text="Guardar imagen", command=save_image)
+save_image_button.place(x=525, y=460)
+open_image_button = Button(root, text="Ver imagen", command=open_image)
+open_image_button.place(x=625, y=460)
 
 
 while True:
