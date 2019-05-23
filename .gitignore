@@ -2,3 +2,4 @@ bak/
 .env
 __pycache__
 tags
+*.pyc
