@@ -21,6 +21,7 @@ metMin = [1, 3, 2, 4, 2, 1]
 metMax = [9, 10, 12, 8, 7, 10]
 initalFood = None
 dictBact = {0 : "S. pneumoniae", 1 : "H. influenzae", 2 : "M. pneumoniae", 3 : "S. pyogenes", 4 : "E. coli", 5: "P. mirabilis"}
+dictGram = {0 : True, 1 : False, 2 : True, 3 : True, 4 : False, 5 : False}
 
 
 def start():
@@ -62,10 +63,10 @@ def setSelectedBacteria(index):
 	sel_bact_label.place(x=525, y=300)
 
 def initiateBacteria():
-	#args: sprite, tama;o Min, tama;o Max, posx, posy, gram, energia, metabolismoMin, metabolismoMax, %adaptacion, adaptacion, 
+	#args: curBact, sprite, tama;o Min, tama;o Max, posx, posy, gram, energia, metabolismoMin, metabolismoMax, %adaptacion, adaptacion, 
 	#consumo de energia
-	bacterias = [Bacteria(None, sizeMin[curBact], sizeMax[curBact],random.randint(100, 400), random.randint(100, 400), 
-    	True, None, metMin[curBact], metMax[curBact], None, None, None) for i in range(random.randint(20, 50))]
+	bacterias = [Bacteria(curBact, None, sizeMin[curBact], sizeMax[curBact],random.randint(100, 400), random.randint(100, 400), 
+    	dictGram[curBact], None, metMin[curBact], metMax[curBact], None, None, None) for i in range(random.randint(20, 50))]
 	return bacterias
     
 
@@ -85,11 +86,14 @@ def simulation():
 	global initalFood
 	open_pdf_button = Button(root, text="Abrir Reporte", command=open_pdf)
 	open_pdf_button.place_forget()
+
 	initial_temp = temp.get()
 	initial_acidity = acidity.get()
 	initial_nutrient = nutrient.get() * 100000
 	initial_humidity = humidity.get()
+
 	bacterias = initiateBacteria()
+
 	num_bacterias = tk.IntVar()
 	bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
 	bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
@@ -138,8 +142,8 @@ def simulation():
 				#verificar si se reproduce o muere
 				if bacteria.verificar_reproduccion():
 					x, y = bacteria.cordenadas()
-					nuevas_bacterias.append(Bacteria(None, sizeMin[curBact], sizeMax[curBact],x + random.choice([-10, 10]), 
-						y + random.choice([-10, 10]), True, None, metMin[curBact], metMax[curBact], None, None, None))
+					nuevas_bacterias.append(Bacteria(curBact, None, sizeMin[curBact], sizeMax[curBact],x + random.choice([-10, 10]), 
+						y + random.choice([-10, 10]), dictGram[curBact], None, metMin[curBact], metMax[curBact], None, None, None))
 				if bacteria.verificar_energia() <= 0 or bacteria.verificar_salud() <= 0:
 					bacterias.remove(bacteria)
 					del bacteria
@@ -209,30 +213,30 @@ background_label.place(x=500, y=0)
 bg = pygame.image.load("lent.png")
 screen.blit(bg, (0, 0))
 
-temp = tk.IntVar()
-temp.set(0)
-temp_scale = Scale(root, from_=80, to=0, variable=temp, length=260)
+temp = tk.DoubleVar()
+temp.set(36.5)
+temp_scale = Scale(root, from_=40.0, to=33, variable=temp, length=260, resolution=0.1)
 temp_label = Label(root, text="Temperatura", font=("Helvetica", 11))
 temp_scale.place(x=680, y=40)
 temp_label.place(x=645, y=15)
 
-acidity = tk.IntVar()
-acidity.set(0)
-acidity_scale = Scale(root, from_=14, to=0, variable=acidity, length=260)
+acidity = tk.DoubleVar()
+acidity.set(7.4)
+acidity_scale = Scale(root, from_=8, to=7.2, variable=acidity, length=260, resolution=0.001)
 acidity_label = Label(root, text="Acidez", font=("Helvetica", 11))
 acidity_scale.place(x=740, y=40)
 acidity_label.place(x=740, y=15)
 
 nutrient = tk.IntVar()
-nutrient.set(0)
-nutrient_scale = Scale(root, from_=10, to=0, variable=nutrient, length=260)
+nutrient.set(4)
+nutrient_scale = Scale(root, from_=10, to=4, variable=nutrient, length=260)
 nutrient_label = Label(root, text="Nutriente", font=("Helvetica", 11))
 nutrient_scale.place(x=800, y=40)
 nutrient_label.place(x=795, y=15)
 
 humidity = tk.IntVar()
-humidity.set(0)
-humidity_scale = Scale(root, from_=100, to=0, variable=humidity, length=260)
+humidity.set(80)
+humidity_scale = Scale(root, from_=100, to=65, variable=humidity, length=260)
 humidity_label = Label(root, text="Humedad", font=("Helvetica", 11))
 humidity_scale.place(x=860, y=40)
 humidity_label.place(x=860, y=15)
