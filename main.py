@@ -30,6 +30,7 @@ def start():
     global startcount, initalFood
     print(' '+ str(temp.get()) +  str(acidity.get()) + str(nutrient.get()) + str(humidity.get()))
     if curBact == None:
+    	tk.messagebox.showinfo("ALERTA", "Selecciona una bacteria para empezar")
     	print('no bacteria selected')
     	return
     if temp.get() == 0 and acidity.get() == 0 and nutrient.get() ==0 and humidity.get() == 0:

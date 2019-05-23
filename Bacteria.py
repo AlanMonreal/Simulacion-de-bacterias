@@ -132,7 +132,8 @@ class Bacteria(pygame.sprite.Sprite):
 		pass
 
 	def verificar_reproduccion(self, bacterias, nutrientes):
-		if (bacterias * 15 ) > nutrientes:
+		if (bacterias * 700 ) > nutrientes:
+			#print('not enough food...')
 			return False
 		if self.energia > 95 and self.energia < 100 and self.adaptacion > 90:
 			self.energia -= 50
