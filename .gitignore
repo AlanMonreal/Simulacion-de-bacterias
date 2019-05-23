@@ -1,5 +1,7 @@
-bak/
-.env
 __pycache__
 tags
-*.pyc
+initialbacteria.jpeg
+maxbacteria.jpeg
+simulador.pdf
+transcurso.png
+simulador.csv
