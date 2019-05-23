@@ -94,13 +94,13 @@ class Bacteria(pygame.sprite.Sprite):
 		if pH > self.pH[self.bacteria][0] and pH < self.pH[self.bacteria][1]:
 			self.salud = self.salud
 		elif pH > self.pH[self.bacteria][2] and pH < self.pH[self.bacteria][0]:
-			self.salud -= 0.3 
+			self.salud -= 0.2 
 		elif pH > self.pH[self.bacteria][3] and pH < self.pH[self.bacteria][2]:
-			self.salud -= 0.5
+			self.salud -= 0.35
 		elif pH > self.pH[self.bacteria][1] and pH < self.pH[self.bacteria][4]:
-			self.salud -= 0.3
+			self.salud -= 0.2
 		elif pH > self.pH[self.bacteria][4] and pH < self.pH[self.bacteria][5]:
-			self.salud -= 0.5
+			self.salud -= 0.35
 		elif pH < self.pH[self.bacteria][3]:
 			self.salud -= 0.75
 		elif pH > self.pH[self.bacteria][5]:
@@ -119,10 +119,10 @@ class Bacteria(pygame.sprite.Sprite):
 			nut = 2
 		elif(nutriente < 0):
 			nut = 0
-			self.salud -= 0.2
+			self.salud -= 0.5
 		else:
 			nut = 1
-			self.salud -= 0.01
+			self.salud -= 0.1
 		if self.energia < 100 and nut != 0:
 			self.energia += nut * self.metabolismo
 		elif self.energia > 100: 
@@ -131,7 +131,9 @@ class Bacteria(pygame.sprite.Sprite):
 	def receptor_de_antibiotico(self, daño):
 		pass
 
-	def verificar_reproduccion(self):
+	def verificar_reproduccion(self, bacterias, nutrientes):
+		if (bacterias * 15 ) > nutrientes:
+			return False
 		if self.energia > 95 and self.energia < 100 and self.adaptacion > 90:
 			self.energia -= 50
 			return True

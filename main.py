@@ -22,6 +22,8 @@ metMax = [9, 10, 12, 8, 7, 10]
 initalFood = None
 dictBact = {0 : "S. pneumoniae", 1 : "H. influenzae", 2 : "M. pneumoniae", 3 : "S. pyogenes", 4 : "E. coli", 5: "P. mirabilis"}
 dictGram = {0 : True, 1 : False, 2 : True, 3 : True, 4 : False, 5 : False}
+dictSprites = {0 : "sprites/sPneumoniae.png", 1 : "sprites/hInfluenzae.png", 2 : "sprites/mPneumoniae.png",
+3 : "sprites/sPyogenes.png", 4 : "sprites/eColi.png", 5 : "sprites/pMirabilis.png"}
 
 
 def start():
@@ -95,10 +97,13 @@ def simulation():
 	bacterias = initiateBacteria()
 
 	num_bacterias = tk.IntVar()
+
 	bacterias_count = Label(root, text="Numero de Bacterias: ", font=("Helvetica", 12))
-	bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
 	bacterias_count.place(x=525, y=325)
+
+	bacterias_live_count = Label(root, textvariable=num_bacterias, font=("Helvetica", 12))
 	bacterias_live_count.place(x=680, y=325)
+
 	start_time = pygame.time.get_ticks()
 	milliseconds_paused = 0
 	sim_done = False
@@ -140,7 +145,7 @@ def simulation():
 				bacteria.verificar_salud()
 
 				#verificar si se reproduce o muere
-				if bacteria.verificar_reproduccion():
+				if bacteria.verificar_reproduccion(len(bacterias), initalFood):
 					x, y = bacteria.cordenadas()
 					nuevas_bacterias.append(Bacteria(curBact, None, sizeMin[curBact], sizeMax[curBact],x + random.choice([-10, 10]), 
 						y + random.choice([-10, 10]), dictGram[curBact], None, metMin[curBact], metMax[curBact], None, None, None))
