@@ -5,8 +5,6 @@ class BatchMode(tk.Toplevel):
     def __init__(self, parent):
         tk.Toplevel.__init__(self)
         self.parent = parent.master
-        # self.parent = parent
-        # self.pack()
         self.create_widgets()
 
     def create_widgets(self):

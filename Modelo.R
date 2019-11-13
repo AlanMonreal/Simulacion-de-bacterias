@@ -1,103 +1,59 @@
-import tkinter as tk
-import subprocess
-from single_mode import SingleMode
-from batch_mode import BatchMode
-import rpy2.robjects as ro
+#! /usr/bin/Rscript
 
+# Correr script de Grind.R
+# Cargar deSolve
+source("Grind.R")
+library(deSolve)
 
-class Welcome(tk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
-        self.master = master
-        self.pack()
-        self.create_widgets()
+# args = commandArgs(trailingOnly=TRUE)
+# if(length(args)==0){
+#   stop("No args", call.=FALSE)
+# } else if (length(args) >= 1) {
+#   print(args[0])
+# }
 
-    def create_widgets(self):
-        self.single_mode = tk.Button(self)
-        self.single_mode["text"] = "MODO SIMPLE"
-        self.single_mode["command"] = self.launch_single_mode
-        self.single_mode.pack(side="top")
-
-        self.batch_mode = tk.Button(self)
-        self.batch_mode["text"] = "MODO INVESTIGACIÓN"
-        self.batch_mode["command"] = self.launch_batch_mode
-        self.batch_mode.pack(side="top")
-
-        self.quit = tk.Button(self, text="SALIR", fg="red",
-                              command=self.master.destroy)
-        self.quit.pack(side="bottom")
-
-    def launch_single_mode(self):
-        self.single = SingleMode(self)
-        self.single.wm_title("MODO SIMPLE")
-
-        # TODO send real args
-        # subprocess.call(['Rscript', 'Modelo.R', '1', '2'], shell=False)
-        r = ro.r
-        r['source']("Modelo.R")
-        print('done')
-        print(type(r.out))
-        # root.withdraw()
-
-    def launch_batch_mode(self):
-        self.batch = BatchMode(self)
-        self.batch.wm_title("MODO INVESTIGACIÓN")
-
-
-def create_r_script():
-    r = ro.r('''
-        source("Grind.R")
-        library(deSolve)
-
-        # args = commandArgs(trailingOnly=TRUE)
-        # if(length(args)==0){
-        #   stop("No args", call.=FALSE)
-        # } else if (length(args) >= 1) {
-        #   print(args[0])
-        # }
-
-        # Declaramos la funcion metiendo nuestro sistema de ecuaciones
-        ModeloTuberculosis<- function(t, y, parms){
-            MNA_t=y[1];
-            MA_t=y[2];
-            MNAF_t=y[3];
-            MAF_t=y[4];
-            TL_t=y[5];
-            TNA_t=y[6];
-            TA_t=y[7];
-
-            dMNA<- -MNA_t*(parms[11]+parms[13]*TL_t)
-            -MNA_t*parms[9]
-            -MNA_t*TL_t*parms[7]
-            +MNAF_t*parms[5]+MAF_t*parms[6]
-            +MNA_t*parms[4];
-
-            dMA<- -MA_t*(parms[14]+parms[16]*TL_t)
-            -MA_t*TL_t*parms[8]
-            +MNA_t*parms[9];
-
-            dMNAF<- -MNAF_t*(parms[17]+parms[20]*TL_t+parms[21]*TNA_t)
-            -MNAF_t*parms[10]
-            +MNA_t*TL_t*parms[7];
-
-            dMAF<- -MAF_t*(parms[22]+parms[25]*TL_t+parms[26]*TA_t)
-            +MNAF_t*parms[10]
-            +MA_t*TL_t*parms[8];
-
-            dTL<- +TL_t*parms[1]
-            -TL_t*(parms[27]+parms[12]*MNA_t+parms[15]*MA_t+parms[18]*MNAF_t+parms[23]*MAF_t)
-            -MA_t*TL_t*parms[8]
-            -MNA_t*TL_t*parms[7];
-
-            dTNA<- +TNA_t*parms[2]
-            -TNA_t*(parms[28]+parms[19]*MNAF_t)
-            +MNA_t*TL_t*parms[7];
-
+# Declaramos la funcion metiendo nuestro sistema de ecuaciones
+ModeloTuberculosis<- function(t, y, parms){  
+  MNA_t=y[1];# Macrofago no activado 
+  MA_t=y[2];# Macrofago activado
+  MNAF_t=y[3];# Macrofago no activado que fagocito
+  MAF_t=y[4];# Macrofago activado que fagocito
+  TL_t=y[5];# Tuberculosis libre
+  TNA_t=y[6];# Tuberculosis en MNAF
+  TA_t=y[7]# Tuberculosis en MAF
+  
+  dMNA<- -MNA_t*(parms[11]+parms[13]*TL_t)# Vida media de macrófago no activado y muerte por M. tuberculosis libre
+  -MNA_t*parms[9]# Activación de macrófago no activado
+  -MNA_t*TL_t*parms[7]# Fagocitación de M. tuberculosis libre por macrófago no activado
+  +MNAF_t*parms[5]+MAF_t*parms[6]# Llegada de macrófago no activado por mecanismos pro-inflamatorios
+  +MNA_t*parms[4];# Entrada constante de macrófago no activado
+ 
+  dMA<- -MA_t*(parms[14]+parms[16]*TL_t)# Vida media de macrófago activado y muerte por M. tuberculosis libre 
+  -MA_t*TL_t*parms[8]# Fagocitación de M. tuberculosis libre por macrófago activado
+  +MNA_t*parms[9];# Activación de macrófago no activado
+  
+  dMNAF<- -MNAF_t*(parms[17]+parms[20]*TL_t+parms[21]*TNA_t)# Vida media de macrófago no activado que fagocitó y muerte por M. tuberculosis libre y fagocitada 
+  -MNAF_t*parms[10]# Activación de macrófago no activado que fagocitó
+  +MNA_t*TL_t*parms[7];# Fagocitación de M. tuberculosis libre por macrófago no activado
+  
+  dMAF<- -MAF_t*(parms[22]+parms[25]*TL_t+parms[26]*TA_t)# Vida media de macrófago activado que fagocitó y muerte por M. tuberculosis libre y fagocitada
+  +MNAF_t*parms[10]# Vida media de macrófago activado que fagocitó y muerte por M. tuberculosis libre y fagocitada 
+  +MA_t*TL_t*parms[8];# Fagocitación de M. tuberculosis libre por macrófago activado
+  
+  dTL<- +TL_t*parms[1]# Proliferación de M. Tuberculosis libre
+  -TL_t*(parms[27]+parms[12]*MNA_t+parms[15]*MA_t+parms[18]*MNAF_t+parms[23]*MAF_t)# Vida media de M. Tuberculosis libre y muerte por todos los macrófagos que hay en el sistema
+  -MA_t*TL_t*parms[8]# Fagocitación de M. Tuberculosis libre por macrófago activo
+  -MNA_t*TL_t*parms[7];# Fagocitación de M. Tuberculosis libre por macrófago no activo
+  
+  dTNA<- +TNA_t*parms[2]# Proliferación de M. Tuberculosis en macrófago no activo
+  -TNA_t*(parms[28]+parms[19]*MNAF_t)# Vida media de M. Tuberculosis en M.N.A.F. y muerte por macrófago no activo que fagocitó
+  +MNA_t*TL_t*parms[7];# Fagocitación de M. Tuberculosis libre por macrófago no activo
+  
   dTA<- +TA_t*parms[3]# Proliferación de M. Tuberculosis en macrófago activo
   -TA_t*(parms[29]+parms[24]*MAF_t)# Vida media de M. Tuberculosis en M.A.F. y muerte por macrófago activo que fagocitó
   +MA_t*TL_t*parms[8]# Fagocitación de M. Tuberculosis libre por macrófago activo
   +MNA_t*parms[10]# Activación de macrófago no activo
-
+  
   list(c(dMNA,dMA,dMNAF,dMAF,dTL,dTNA,dTA))
 }
 
@@ -202,11 +158,16 @@ tspan =seq(from = 0, to = 12, by = 0.001)
 
 # Integramos con funcion ode
 out <- ode(y = y0, times = tspan, func = ModeloTuberculosis, parms = parms)
-        ''')
+
+# Graficamos los resultados
+par(pty="s")
+plot(out[,1], out[,2], type = "l", col="pink", xlab = "Time", ylab ="[MNA:rosa,MA:rojo, MNAF:azul, MAF:negro, TL:verde, TNA: amarillo, TA:morado]")
+lines(out[,1], out[,3],type = "l", col="red")
+lines(out[,1], out[,4],type = "l", col="blue")
+lines(out[,1], out[,5],type = "l", col="black")
+lines(out[,1], out[,6],type = "l", col="green")
+lines(out[,1], out[,7],type = "l", col="yellow")
+lines(out[,1], out[,8],type = "l", col="purple")
 
 
-root = tk.Tk()
-root.title("Simulador de bacterias")
-root.geometry("300x150+500+300")
-app = Welcome(root)
-app.mainloop()
+legend=c("X(t)", "Y(t)", "XY(t)")
