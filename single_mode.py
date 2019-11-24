@@ -9,17 +9,33 @@ class SingleMode(tk.Toplevel):
         # self.pack()
         self.create_widgets()
 
+    def fetch(self, entries):
+        results = []
+        for entry in entries:
+            num  = entry.get()
+            num = int(num)
+            results.append(num)
+        print(results)
+        return results
+
+    def makeform(self, fields):
+        entries = []
+        for field in fields:
+            row = tk.Frame(self)
+            lab = tk.Label(row, width=15, text=field, anchor='w')
+            ent = tk.Entry(row)
+            row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+            lab.pack(side=tk.LEFT)
+            ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
+            entries.append(ent)
+        return entries
+
     def create_widgets(self):
-        # self.single_mode = tk.Button(self)
-        # self.single_mode["text"] = "MODO SIMPLE"
-        # # self.single_mode["command"] = self.launch_single_mode
-        # self.single_mode.pack(side="top")
-
-        # self.batch_mode = tk.Button(self)
-        # self.batch_mode["text"] = "MODO INVESTIGACIÓN"
-        # # self.batch_mode["command"] = self.launch_batch_mode
-        # self.batch_mode.pack(side="top")
-
+        fields = ['var1','var2','var3']
+        entries = self.makeform(fields)
+        b1 = tk.Button(self, text='Show',
+                      command=lambda:self.fetch(entries))
         self.quit = tk.Button(self, text="SALIR", fg="red",
-                              command=self.parent.destroy)
-        self.quit.pack(side="bottom")
+                              command=self.destroy)
+        b1.pack(side="left", padx=30, pady=10)
+        self.quit.pack(side="right", padx=30, pady=10)
