@@ -1,0 +1,4 @@
+tkinter
+numpy
+rpy2
+reportlab
